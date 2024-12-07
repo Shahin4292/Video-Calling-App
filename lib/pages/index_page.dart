@@ -143,6 +143,7 @@
 //     print(status);
 //   }
 // }
+import 'dart:developer';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
@@ -248,7 +249,18 @@ class _IndexPageState extends State<IndexPage> {
       await _handleCameraAndMic(Permission.camera);
       await _handleCameraAndMic(Permission.microphone);
       await Navigator.push(
-          context, MaterialPageRoute(builder: (context) => CallPage()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => CallPage(
+                    channelName: _channelController.text,
+                    role: _role,
+                  )));
     }
+  }
+
+  Future<void> _handleCameraAndMic(Permission permission) async {
+    final status = await permission.request();
+    log(status.toString());
+    // log(status.toString());
   }
 }
