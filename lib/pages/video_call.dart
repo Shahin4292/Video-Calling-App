@@ -29,7 +29,6 @@ class _VideoCallState extends State<VideoCall> {
     Wakelock.disable(); // Turn off wakelock feature after call end
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
