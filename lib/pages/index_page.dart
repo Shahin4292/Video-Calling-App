@@ -146,6 +146,8 @@
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:video_calling_app/pages/call_page.dart';
 
 class IndexPage extends StatefulWidget {
   const IndexPage({super.key});
@@ -189,13 +191,64 @@ class _IndexPageState extends State<IndexPage> {
               TextField(
                 controller: _channelController,
                 decoration: InputDecoration(
+                    fillColor: Colors.black26,
+                    filled: true,
+                    hintText: "Channel Name",
+                    border: UnderlineInputBorder(
+                        // borderSide: BorderSide(width: 1),
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(12)),
                     errorText:
                         _validateError ? 'Channel Name is Mandatory' : null),
-              )
+              ),
+              RadioListTile(
+                  title: Text("BroadCaster"),
+                  value: ClientRoleType.clientRoleBroadcaster,
+                  groupValue: _role,
+                  onChanged: (ClientRoleType? value) {
+                    setState(() {
+                      _role = value;
+                    });
+                  }),
+              RadioListTile(
+                  title: Text("Audience"),
+                  value: ClientRoleType.clientRoleAudience,
+                  groupValue: _role,
+                  onChanged: (ClientRoleType? value) {
+                    setState(() {
+                      _role = value;
+                    });
+                  }),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      minimumSize: Size(MediaQuery.sizeOf(context).width, 55)),
+                  onPressed: onJoin,
+                  child: Text(
+                    "Join",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  )),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> onJoin() async {
+    setState(() {
+      _channelController.text.isEmpty
+          ? _validateError = true
+          : _validateError = false;
+    });
+    if (_channelController.text.isNotEmpty) {
+      await _handleCameraAndMic(Permission.camera);
+      await _handleCameraAndMic(Permission.microphone);
+      await Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CallPage()));
+    }
   }
 }
